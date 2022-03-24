@@ -10,7 +10,8 @@ public class GameField extends JPanel implements ActionListener {
     private final int SIZE = 320; //розмір ігрового поля
     private final int DOT_SIZE = 16; //розмір однієї частини змії або розмір яблучка
     private final int ALL_DOTS = 400; // загальна кількість можливих яблучок (тобто кількість клітинок поля з розмірами 16х16)
-    private Image dot; // зображення поля
+    private Image dot; // зображення змії
+    private Image dot0; // зображення голови змії
     private Image apple; //зображення яблука
     private int appleX; //місцезнаходження яблука Х
     private int appleY; //місцезнаходження яблука Y
@@ -46,14 +47,18 @@ public class GameField extends JPanel implements ActionListener {
     public void createApple(){
         appleX = new Random().nextInt(20)*DOT_SIZE;
         appleY = new Random().nextInt(20)*DOT_SIZE;
-
     }
 
     public void loadImages(){
+        //відображення яблука
         ImageIcon iia = new ImageIcon("apple.png");
         apple = iia.getImage();
+        //відображення тіла змії
         ImageIcon iid = new ImageIcon("dot.png");
         dot = iid.getImage();
+        //відображення гголови змії
+        ImageIcon iid0 = new ImageIcon("dot0.png");
+        dot0 = iid0.getImage();
     }
 
     @Override
@@ -62,15 +67,30 @@ public class GameField extends JPanel implements ActionListener {
         if(inGame){
             g.drawImage(apple, appleX, appleY, this);
             for (int i = 0; i < dots; i++) {
-                g.drawImage(dot, x[i], y[i], this);
+                if (i == 0){
+                    g.drawImage(dot0, x[i], y[i], this);
+                }
+                else{
+                    g.drawImage(dot, x[i], y[i], this);
+                }
+            }
+            for (int x = 0; x < 351; x+=DOT_SIZE) {
+                g.setColor(Color.gray);
+                g.drawLine(x, 0, x, SIZE*SIZE);
+            }
+            for (int y = 0; y < 351; y+=DOT_SIZE) {
+                g.setColor(Color.gray);
+                g.drawLine(0, y, SIZE*SIZE, y);
             }
         }
         else {
-            String str = "Game Over";
+            String str =  "Game Over "; //не знаю як створити перенос на наступну строку
+            String points = String.format("points: %d", (dots -3));
             Font f = new Font("Comic Sans MS", Font.BOLD, 18 );
             g.setColor(Color.GREEN);
             g.setFont(f);
             g.drawString(str, SIZE/2-40,SIZE/2);
+            g.drawString(points, SIZE/2-40,SIZE/2+20);
         }
     }
 
