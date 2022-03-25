@@ -15,6 +15,7 @@ import java.awt.*;
 public class MainWindow extends JFrame {
     public static void main (String[] args){
         MainWindow wm = new MainWindow();
+
         /*
         String [] fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         for (String s: fonts){
@@ -28,7 +29,7 @@ public class MainWindow extends JFrame {
         setIconImage(new ImageIcon("apple.png").getImage());
         setVisible(true);
         setResizable(false);
-        setTitle("Змея Дани");
+        setTitle("Змея 0");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension dimension = toolkit.getScreenSize();
@@ -36,6 +37,7 @@ public class MainWindow extends JFrame {
         //setLocation();
         setBounds(dimension.width/2 - 168, dimension.height/2-179, 351, 374);
         add(new GameField());
+
     }
 }
 

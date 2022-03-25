@@ -11,7 +11,10 @@ public class GameField extends JPanel implements ActionListener {
     private final int DOT_SIZE = 16; //розмір однієї частини змії або розмір яблучка
     private final int ALL_DOTS = 400; // загальна кількість можливих яблучок (тобто кількість клітинок поля з розмірами 16х16)
     private Image dot; // зображення змії
-    private Image dot0; // зображення голови змії
+    private Image dotUP; // зображення голови змії
+    private Image dotDOWN; // зображення голови змії
+    private Image dotLEFT; // зображення голови змії
+    private Image dotRIGHT; // зображення голови змії
     private Image apple; //зображення яблука
     private int appleX; //місцезнаходження яблука Х
     private int appleY; //місцезнаходження яблука Y
@@ -57,8 +60,14 @@ public class GameField extends JPanel implements ActionListener {
         ImageIcon iid = new ImageIcon("dot.png");
         dot = iid.getImage();
         //відображення гголови змії
-        ImageIcon iid0 = new ImageIcon("dot0.png");
-        dot0 = iid0.getImage();
+        ImageIcon iidUP = new ImageIcon("dotUP.png");
+        dotUP = iidUP.getImage();
+        ImageIcon iidDOWN = new ImageIcon("dotDOWN.png");
+        dotDOWN = iidDOWN.getImage();
+        ImageIcon iidLEFT = new ImageIcon("dotLEFT.png");
+        dotLEFT = iidLEFT.getImage();
+        ImageIcon iidRIGHT = new ImageIcon("dotRIGHT.png");
+        dotRIGHT = iidRIGHT.getImage();
     }
 
     @Override
@@ -67,8 +76,20 @@ public class GameField extends JPanel implements ActionListener {
         if(inGame){
             g.drawImage(apple, appleX, appleY, this);
             for (int i = 0; i < dots; i++) {
-                if (i == 0){
-                    g.drawImage(dot0, x[i], y[i], this);
+               //логіка зображення голови змії з реагуванням на напрямок (в яку сторону йде змія в ту ж сторону дивляться очі)
+               if (i == 0){
+                    if (up){
+                        g.drawImage(dotUP, x[i], y[i], this);
+                    }
+                    else if (down){
+                        g.drawImage(dotDOWN, x[i], y[i], this);
+                    }
+                    else if (left){
+                        g.drawImage(dotLEFT, x[i], y[i], this);
+                    }
+                    else {
+                        g.drawImage(dotRIGHT, x[i], y[i], this);
+                    }
                 }
                 else{
                     g.drawImage(dot, x[i], y[i], this);
