@@ -26,7 +26,17 @@ public class GameField extends JPanel implements ActionListener {
     private boolean right = true;
     private boolean up = false;
     private boolean down = false;
-    private boolean inGame = true;
+    private boolean inGame = false;
+    private boolean pause = false; //змінна ПАУЗИ
+    private boolean startMenu = true; //змінна початкового меню гри
+
+    private int speed; // ствоерння змінної швидкості (складності гри)
+    private boolean speed1 = false;
+    private boolean speed2 = false;
+    private boolean speed3 = false;
+    private boolean [] speedB = {speed1, speed2, speed3};
+
+
 
     public GameField(){
         setBackground(Color.black);
@@ -42,14 +52,32 @@ public class GameField extends JPanel implements ActionListener {
             x[i] = 48 - i*DOT_SIZE;
             y[i] = 48;
         }
-        timer = new Timer(250, this);
+        if (speed1){
+            speed = 250;
+        }
+        if (speed2){
+            speed = 175;
+        }
+        if (speed3){
+            speed = 100;
+        }
+        System.out.println(speed);
+        timer = new Timer(speed, this);
         timer.start();
         createApple();
     }
 
     public void createApple(){
-        appleX = new Random().nextInt(20)*DOT_SIZE;
-        appleY = new Random().nextInt(20)*DOT_SIZE;
+        appleX = new Random().nextInt(20) * DOT_SIZE;
+        appleY = new Random().nextInt(20) * DOT_SIZE;
+        //перевірка спавну яблука на тілі змії
+        for (int i = 0; i < dots; i++){
+            if (appleX == x[i] && appleY == y[i]) {
+                //System.out.println("яблоко попало");
+                appleX = new Random().nextInt(20) * DOT_SIZE;
+                appleY = new Random().nextInt(20) * DOT_SIZE;
+            }
+        }
     }
 
     public void loadImages(){
@@ -73,7 +101,31 @@ public class GameField extends JPanel implements ActionListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(inGame){
+        if(startMenu){
+            String helloNiga = "Hello Niga";
+            String startMen =  "Press «S» to start";
+            String [] sp = {"speed 1",  "speed 2", "speed 3"};
+            Font k = new Font("Comic Sans MS", Font.BOLD, 18 );
+            g.setColor(Color.GREEN);
+            g.setFont(k);
+
+            g.drawString(helloNiga, SIZE/2-40,SIZE/2-20);
+            g.drawString(startMen, SIZE/2-75,SIZE/2);
+
+            //ПОГАНО З ПОМИЛКОЮ ВІДМАЛЬВУЮТЬСЯ ОБРАНІ ШВИДКОСТІ, ШВИДКОСТІ ОБИРАЮТЬСЯ НЕЗРОЗУМІЛО
+            for (int i = 0; i < 3; i++){
+                if (speedB[i] == true){
+                    g.setColor(Color.RED);
+                    g.drawString(sp[i], SIZE/2-75,SIZE/2+((i+1)*20));
+                }
+                else if (speedB[i] == false){
+                    g.setColor(Color.GREEN);
+                    g.drawString(sp[i], SIZE/2-75,SIZE/2+((i+1)*20));
+                }
+            }
+
+        }
+        else if(inGame){
             g.drawImage(apple, appleX, appleY, this);
             for (int i = 0; i < dots; i++) {
                //логіка зображення голови змії з реагуванням на напрямок (в яку сторону йде змія в ту ж сторону дивляться очі)
@@ -95,6 +147,7 @@ public class GameField extends JPanel implements ActionListener {
                     g.drawImage(dot, x[i], y[i], this);
                 }
             }
+            //зображення стіки поля
             for (int x = 0; x < 351; x+=DOT_SIZE) {
                 g.setColor(Color.gray);
                 g.drawLine(x, 0, x, SIZE*SIZE);
@@ -107,12 +160,31 @@ public class GameField extends JPanel implements ActionListener {
         else {
             String str =  "Game Over "; //не знаю як створити перенос на наступну строку
             String points = String.format("points: %d", (dots -3));
+            String  restart = "to restart, press «R»";
             Font f = new Font("Comic Sans MS", Font.BOLD, 18 );
             g.setColor(Color.GREEN);
             g.setFont(f);
             g.drawString(str, SIZE/2-40,SIZE/2);
             g.drawString(points, SIZE/2-40,SIZE/2+20);
+            g.drawString(restart, SIZE/2-85,SIZE/2+40);
+
         }
+
+        /*
+        Попітка отрісовкі Дургого изображения во время паузі
+        ТУТ ТРЕБА ВИВЧИТИ МНОГОПОТОЧНОСТЬ
+        https://ru.stackoverflow.com/questions/1119495/%D0%A0%D0%B0%D0%B1%D0%BE%D1%82%D0%B0-%D1%81-%D0%BF%D0%BE%D1%82%D0%BE%D0%BA%D0%BE%D0%BC-%D0%B2-swing-java
+
+        System.out.println(pause);
+
+        if (pause == true){
+            String paus =  "Pause ";
+            Font k = new Font("Comic Sans MS", Font.BOLD, 18 );
+            g.setColor(Color.GREEN);
+            g.setFont(k);
+            g.drawString(paus, SIZE/2-40,SIZE/2);
+        }
+         */
     }
 
     public void move(){
@@ -145,19 +217,24 @@ public class GameField extends JPanel implements ActionListener {
         for (int i = dots; i >0 ; i--) {
             if (i>4 && x[0] ==  x[i] && y[0] == y[i]){
                 inGame = false;
+                timer.stop();
             }
         }
         if (x[0]>SIZE){
             inGame = false;
+            timer.stop();
         }
         if (x[0]<0){
             inGame = false;
+            timer.stop();
         }
         if (y[0]>SIZE){
             inGame = false;
+            timer.stop();
         }
         if (y[0]<0){
             inGame = false;
+            timer.stop();
         }
     }
 
@@ -196,6 +273,51 @@ public class GameField extends JPanel implements ActionListener {
                 left = false;
                 down = true;
             }
+            //стврення клавіші пауза
+            if (key == KeyEvent.VK_SPACE){
+                if (pause == false) {
+                    timer.stop();
+                    pause = true;
+                } else {
+                    timer.start();
+                    pause = false;
+                }
+            }
+            if (key == KeyEvent.VK_S){
+                startMenu = false;
+                inGame = true;
+            }
+            if (key == KeyEvent.VK_R){
+                startMenu = true;
+
+                //щоб змія не запамятовувала свій минулий напрямок, сидуємого його до початкового
+                right = true;
+                up = false;
+                down = false;
+                left =false;
+
+                initGame(); //заново запускаємо гру
+            }
+            if (key == KeyEvent.VK_Q){
+                speed1 = true;
+                speed2 = false;
+                speed3 = false;
+                System.out.println("1"+ speed1);
+            }
+            if (key == KeyEvent.VK_W){
+                speed1 = false;
+                speed2 = true;
+                speed3 = false;
+                System.out.println("2"+ speed2);
+
+            }
+            if (key == KeyEvent.VK_E){
+                speed1 = false;
+                speed2 = false;
+                speed3 = true;
+                System.out.println("3"+ speed3);
+            }
+
         }
     }
 }

@@ -9,6 +9,10 @@
 // 8) перед запуском гри створити кнопки з рівнем скалдності
 // 9) + перша клітинка змії іншого кольору
 //10) + сітка на карті
+//11) + ПАУЗА на клавіші "пробіл"
+
+// https://russianblogs.com/article/93211049799/
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -24,7 +28,6 @@ public class MainWindow extends JFrame {
          */
 
     }
-    //Image apl;
     public MainWindow(){
         setIconImage(new ImageIcon("apple.png").getImage());
         setVisible(true);
