@@ -13,7 +13,7 @@ public class ButtonRestart extends JFrame implements ActionListener {
         this.add(restart);
     }
 
-
+слава украине
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == restart){
